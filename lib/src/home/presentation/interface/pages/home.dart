@@ -63,48 +63,8 @@ class HomePage extends StatelessWidget {
           ),
         ),
         body: const SafeArea(
-            child: Expanded(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                // const Spacer(),
-                // const Text(
-                //   'Tap to Media Match',
-                //   style: TextStyle(
-                //     color: Colors.white,
-                //     fontWeight: FontWeight.bold,
-                //     fontSize: 18,
-                //   ),
-                // ),
-                // const SizedBox(height: 50),
-                PrimaryButton(),
-                // const SizedBox(height: 90),
-                // Container(
-                //   height: 60,
-                //   alignment: Alignment.center,
-                //   decoration: BoxDecoration(
-                //     shape: BoxShape.circle,
-                //     border: const Border(top: BorderSide(color: Colors.white54)),
-                //     gradient: LinearGradient(
-                //       colors: [
-                //         Colors.blue.shade400,
-                //         Colors.blue.shade500,
-                //         Colors.blue.shade500,
-                //         Colors.blue.shade600,
-                //       ],
-                //     ),
-                //   ),
-                //   child: SvgPicture.asset(
-                //     SvgAssets.upload,
-                //     height: 25,
-                //     color: Colors.white,
-                //   ),
-                // ),
-                // const Spacer(flex: 2),
-              ],
-            ),
-          ),
+            child: Center(
+          child: PrimaryButton(),
         )),
       ),
     );

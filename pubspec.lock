@@ -179,14 +179,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
-  lottie:
+  lordicon:
     dependency: "direct main"
     description:
-      name: lottie
-      sha256: "6a24ade5d3d918c306bb1c21a6b9a04aab0489d51a2582522eea820b4093b62b"
+      name: lordicon
+      sha256: "6555f0059f20bfc3bd44c40344623235cd86965f10dc4cb79c91ad25f3402014"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.2"
+    version: "1.0.3"
+  lottie:
+    dependency: transitive
+    description:
+      name: lottie
+      sha256: a93542cc2d60a7057255405f62252533f8e8956e7e06754955669fd32fb4b216
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.7.0"
   matcher:
     dependency: transitive
     description:
@@ -362,4 +370,4 @@ packages:
     version: "6.5.0"
 sdks:
   dart: ">=3.3.1 <4.0.0"
-  flutter: ">=3.16.0"
+  flutter: ">=3.13.0"
