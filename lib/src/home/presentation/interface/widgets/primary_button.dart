@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use, library_private_types_in_public_api
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -7,6 +9,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:lordicon/lordicon.dart';
 import 'package:media_match/shared/data/animation_assets.dart';
 import 'package:media_match/shared/data/svg_assets.dart';
+import 'package:record/record.dart';
+
+import '../../../../../http_requests/search.dart';
 
 class PrimaryButton extends StatefulHookWidget {
   const PrimaryButton({super.key});
@@ -15,7 +20,8 @@ class PrimaryButton extends StatefulHookWidget {
   _PrimaryButtonState createState() => _PrimaryButtonState();
 }
 
-class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateMixin {
+class _PrimaryButtonState extends State<PrimaryButton>
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
@@ -37,11 +43,49 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final showOptions = useState(false);
+    /// Instance of record
+    final record = Record();
+    ValueNotifier recordedFilePath = ValueNotifier<String>('');
+    Timer? autoStopTimer;
 
-    var mediaMatchAnimation =
-        IconController.assets(AnimationAssets.systemrEgular715SpinnerHorizontalDashedCircle);
-    var microphoneAnimation = IconController.assets(AnimationAssets.wiredOutline1037VlogCamera);
-    var cameraAnimation = IconController.assets(AnimationAssets.wiredOutline188MicrophoneRecording);
+    /// Stop recording and search database for a match
+    stopRecording() async {
+      print('6 seconds up ===>');
+      recordedFilePath.value = await record.stop();
+      autoStopTimer?.cancel();
+      print('file source: ${recordedFilePath.value}');
+      await search(recordedFilePath.value);
+    }
+
+    recordAudio() async {
+      print('===== = == = = = Job started');
+      // Check and request permission
+      if (await record.hasPermission()) {
+        // Start recording
+        await record.start(
+          encoder: AudioEncoder.aacLc,
+          bitRate: 128000,
+          samplingRate: 44100,
+        );
+
+        // Auto stop recording after 6 seconds and search database
+        autoStopTimer = Timer(const Duration(seconds: 6), () {
+          stopRecording();
+        });
+      }
+    }
+
+    // useEffect(() {
+    //   recordAudio();
+    //   return;
+    // },[]);
+
+    var mediaMatchAnimation = IconController.assets(
+        AnimationAssets.systemrEgular715SpinnerHorizontalDashedCircle);
+    var microphoneAnimation =
+        IconController.assets(AnimationAssets.wiredOutline1037VlogCamera);
+    var cameraAnimation = IconController.assets(
+        AnimationAssets.wiredOutline188MicrophoneRecording);
 
     mediaMatchAnimation.addStatusListener((status) {
       if (status == ControllerStatus.ready) {
@@ -56,10 +100,12 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
       children: [
         AnimatedContainer(
           duration: 300.milliseconds,
-          height:
-              showOptions.value ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width : 0,
-          width:
-              showOptions.value ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width : 0,
+          height: showOptions.value
+              ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width
+              : 0,
+          width: showOptions.value
+              ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width
+              : 0,
           margin: const EdgeInsets.only(bottom: 30),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -86,7 +132,9 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
           ),
           child: Padding(
             padding: const EdgeInsets.all(40),
-            child: showOptions.value ? IconViewer(controller: cameraAnimation) : null,
+            child: showOptions.value
+                ? IconViewer(controller: cameraAnimation)
+                : null,
           ),
         ).animate().fadeIn().scaleXY(duration: 300.milliseconds),
 
@@ -153,10 +201,12 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
 
         AnimatedContainer(
           duration: 300.milliseconds,
-          height:
-              showOptions.value ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width : 0,
-          width:
-              showOptions.value ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width : 0,
+          height: showOptions.value
+              ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width
+              : 0,
+          width: showOptions.value
+              ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width
+              : 0,
           margin: const EdgeInsets.only(top: 30),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -183,7 +233,9 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
           ),
           child: Padding(
             padding: const EdgeInsets.all(40),
-            child: showOptions.value ? IconViewer(controller: microphoneAnimation) : null,
+            child: showOptions.value
+                ? IconViewer(controller: microphoneAnimation)
+                : null,
           ),
         ).animate().fadeIn().scaleXY(duration: 300.milliseconds),
       ],
