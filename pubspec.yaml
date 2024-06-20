@@ -20,6 +20,7 @@ dependencies:
   lordicon: ^1.0.3
   http: ^1.2.1
   record: ^4.4.4
+  lottie: ^2.7.0
 
 dev_dependencies:
   flutter_test:
