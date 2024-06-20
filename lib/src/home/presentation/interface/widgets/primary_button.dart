@@ -53,7 +53,7 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
     /// Stop recording and search database for a match
 
     stopRecording() async {
-      print('6 seconds up ===>');
+      print('10 seconds up ===>');
       recordedFilePath.value = await record.stop();
       autoStopTimer?.cancel();
       print('file source: ${recordedFilePath.value}');
@@ -79,7 +79,7 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
         );
 
         // Auto stop recording after 6 seconds and search database
-        autoStopTimer = Timer(const Duration(seconds: 6), () {
+        autoStopTimer = Timer(const Duration(seconds: 10), () {
           stopRecording();
           Navigator.pop(context);
         });
