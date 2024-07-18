@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:media_match/shared/data/svg_assets.dart';
+import 'package:media_match/shared/presentation/theme/theme_extensions.dart';
 import 'package:media_match/src/home/presentation/interface/widgets/primary_button.dart';
 
 class HomePage extends StatelessWidget {
@@ -14,25 +15,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final boxDecorationExtensions = Theme.of(context).extension<BoxDecorationExtension>()!;
+
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.blue.shade500,
-            Colors.blue.shade500,
-            Colors.blue.shade500,
-            Colors.blue.shade500,
-            Colors.blue.shade600,
-            Colors.blue.shade600,
-            Colors.blue.shade600,
-            Colors.blue.shade700,
-            Colors.blue.shade800,
-            Colors.blue.shade900,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: boxDecorationExtensions.homeBackground,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -43,8 +29,11 @@ class HomePage extends StatelessWidget {
           centerTitle: false,
           title: GestureDetector(
             onTap: () {
-              controller.animateToPage(0,
-                  duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+              controller.animateToPage(
+                0,
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOut,
+              );
             },
             child: Column(
               children: [
@@ -56,7 +45,11 @@ class HomePage extends StatelessWidget {
                 const SizedBox(height: 2),
                 const Text(
                   'Library',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),

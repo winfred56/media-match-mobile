@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Media match',
       debugShowCheckedModeBanner: false,
-      theme: lightTheme,
+      theme: AppTheme().theme(),
       home: const Shell(),
     );
   }

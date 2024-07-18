@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:lottie/lottie.dart';
 import 'package:media_match/shared/data/animation_assets.dart';
+import 'package:media_match/shared/presentation/theme/theme_extensions.dart';
 
 class RecordAudioPage extends HookWidget {
   const RecordAudioPage({
@@ -16,36 +17,20 @@ class RecordAudioPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final boxDecorationExtensions = Theme.of(context).extension<BoxDecorationExtension>()!;
+
     useMemoized(() {
       recordAudio();
     });
 
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.blue.shade500,
-            Colors.blue.shade500,
-            Colors.blue.shade500,
-            Colors.blue.shade500,
-            Colors.blue.shade600,
-            Colors.blue.shade600,
-            Colors.blue.shade600,
-            Colors.blue.shade700,
-            Colors.blue.shade800,
-            Colors.blue.shade900,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: boxDecorationExtensions.homeBackground,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           leading: CloseButton(
             onPressed: () {
               stopRecording();
-              Navigator.pop(context);
             },
           ),
           shadowColor: Colors.transparent,

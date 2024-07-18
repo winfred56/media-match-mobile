@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:media_match/src/home/presentation/interface/pages/home.dart';
 import 'package:media_match/src/library/presentation/interface/pages/library.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:media_match/src/shell/presentation/interface/widgets/page_indicator.dart';
 
 class Shell extends HookWidget {
   const Shell({super.key});
@@ -14,10 +14,13 @@ class Shell extends HookWidget {
 
     useMemoized(() {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        // Jump to the second page when the screen is mounted
         controller.jumpToPage(1);
       });
 
       controller.addListener(() {
+        // Set the offset to the current page of the page view or
+        //assign it to the initial page of the pageview if the page view isn't moved.
         offset.value = controller.page ?? controller.initialPage.toDouble();
       });
     });
@@ -40,19 +43,7 @@ class Shell extends HookWidget {
               alignment: Alignment.topCenter,
               child: Padding(
                 padding: const EdgeInsets.only(top: 40),
-                child: SmoothIndicator(
-                  offset: offset.value,
-                  count: pages.length,
-                  effect: WormEffect(
-                    dotWidth: 8,
-                    dotHeight: 8,
-                    spacing: 15,
-                    activeDotColor: offset.value.round() == 1 ? Colors.white : Colors.blue,
-                    dotColor: offset.value.round() == 1 ? Colors.white54 : Colors.grey,
-                    type: WormType.thin,
-                  ),
-                  size: const Size(50, 1),
-                ),
+                child: PageIndicator(offset: offset, pages: pages),
               ),
             ),
           )

@@ -25,10 +25,11 @@
 // }
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:http/http.dart' as http;
+import 'package:media_match/entities/audio_search_response.dart';
 
-
-Future<void> search(String filePath) async {
+Future<AudioSearchResponse> search(String filePath) async {
   final uri = Uri.parse('https://media-match-backend.onrender.com/find/');
   final request = http.MultipartRequest('GET', uri);
 
@@ -36,17 +37,13 @@ Future<void> search(String filePath) async {
   final file = File(filePath);
   request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
-  try {
-    final response = await request.send();
+  final response = await request.send();
 
-    if (response.statusCode == 200) {
-      final responseData = await http.Response.fromStream(response);
-      final data = jsonDecode(responseData.body);
-      print('Search result: $data');
-    } else {
-      print('Failed to search, status code: ${response.statusCode}');
-    }
-  } catch (e) {
-    print('Error during search: $e');
+  if (response.statusCode == 200) {
+    final responseData = await http.Response.fromStream(response);
+    final data = jsonDecode(responseData.body);
+    return AudioSearchResponse.fromJson(data);
+  } else {
+    throw 'Failed to search, status code: ${response.statusCode}';
   }
 }
