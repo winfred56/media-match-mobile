@@ -1,5 +1,5 @@
 class AudioSearchResponse {
-  final String id;
+  final int id;
   final String fileName;
   final double durationSeconds;
 

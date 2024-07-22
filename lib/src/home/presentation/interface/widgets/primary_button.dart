@@ -1,17 +1,17 @@
-// ignore_for_file: deprecated_member_use, library_private_types_in_public_api
-
-import 'dart:async';
 import 'dart:io';
+import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:lordicon/lordicon.dart';
-import 'package:media_match/shared/data/animation_assets.dart';
-import 'package:media_match/shared/data/svg_assets.dart';
-import 'package:media_match/src/home/presentation/interface/pages/record_audio.dart';
 import 'package:record/record.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:flutter/material.dart';
+import 'package:lordicon/lordicon.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:media_match/shared/data/svg_assets.dart';
+import 'package:media_match/shared/data/animation_assets.dart';
+import 'package:media_match/src/home/presentation/interface/pages/record_audio.dart';
 
 import '../../../../../http_requests/search.dart';
 
@@ -47,52 +47,61 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
 
     /// Instance of record
     final record = Record();
-    ValueNotifier recordedFilePath = ValueNotifier<String>('');
+    ValueNotifier<String> recordedFilePath = ValueNotifier<String>('');
     Timer? autoStopTimer;
 
     /// Stop recording and search database for a match
-
-    stopRecording() async {
+    Future<void> stopRecording() async {
       print('10 seconds up ===>');
-      recordedFilePath.value = await record.stop();
+      recordedFilePath.value = (await record.stop())!;
       autoStopTimer?.cancel();
       print('file source: ${recordedFilePath.value}');
 
-      // Check if the file exists before trying to access it
-      var file = File(recordedFilePath.value);
-      if (await file.exists()) {
-        await search(recordedFilePath.value);
+      if (recordedFilePath.value.isNotEmpty) {
+        var file = File(recordedFilePath.value);
+        if (await file.exists()) {
+          await search(recordedFilePath.value);
+        } else {
+          if (kDebugMode) {
+            print('File does not exist');
+          }
+        }
       } else {
-        print('File does not exist');
+        if (kDebugMode) {
+          print('Recording file path is null or empty');
+        }
       }
     }
 
-    recordAudio() async {
+    Future<void> recordAudio() async {
       print('===== = == = = = Job started');
       // Check and request permission
       if (await record.hasPermission()) {
+        // Get temporary directory for storing the recording
+        Directory tempDir = await getTemporaryDirectory();
+        String tempPath = tempDir.path;
+        String filePath = '$tempPath/recording.m4a';
+
         // Start recording
         await record.start(
+          path: filePath,
           encoder: AudioEncoder.aacLc,
           bitRate: 128000,
           samplingRate: 44100,
         );
 
-        // Auto stop recording after 6 seconds and search database
+        // Auto stop recording after 10 seconds and search database
         autoStopTimer = Timer(const Duration(seconds: 10), () {
           stopRecording();
           Navigator.pop(context);
         });
+      } else {
+        print('Recording permission not granted');
       }
     }
 
-    // useEffect(() {
-    //   recordAudio();
-    //   return;
-    // },[]);
-
     var mediaMatchAnimation =
-        IconController.assets(AnimationAssets.systemrEgular715SpinnerHorizontalDashedCircle);
+    IconController.assets(AnimationAssets.systemrEgular715SpinnerHorizontalDashedCircle);
 
     mediaMatchAnimation.addStatusListener((status) {
       if (status == ControllerStatus.ready) {
@@ -115,11 +124,7 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
                   stopRecording: stopRecording,
                 );
               },
-            )
-                // MaterialPageRoute(
-                //   builder: (context) => const RecordAudioPage(),
-                // ),
-                );
+            ));
           },
           child: AnimatedContainer(
             duration: 300.milliseconds,
@@ -209,11 +214,11 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
                 child: !showOptions.value
                     ? IconViewer(controller: mediaMatchAnimation)
                     : SvgPicture.asset(
-                        SvgAssets.cross,
-                        color: Colors.white,
-                        height: 20,
-                        width: 20,
-                      ),
+                  SvgAssets.cross,
+                  color: Colors.white,
+                  height: 20,
+                  width: 20,
+                ),
               ),
             ),
           ),
@@ -224,9 +229,9 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
         AnimatedContainer(
           duration: 300.milliseconds,
           height:
-              showOptions.value ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width : 0,
+          showOptions.value ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width : 0,
           width:
-              showOptions.value ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width : 0,
+          showOptions.value ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width : 0,
           margin: const EdgeInsets.only(top: 30),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
