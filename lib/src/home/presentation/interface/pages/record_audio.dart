@@ -10,10 +10,12 @@ class RecordAudioPage extends HookWidget {
     super.key,
     required this.recordAudio,
     required this.stopRecording,
+    required this.cancelRecording,
   });
 
   final Function() recordAudio;
   final Function() stopRecording;
+  final Function() cancelRecording;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,8 @@ class RecordAudioPage extends HookWidget {
         appBar: AppBar(
           leading: CloseButton(
             onPressed: () {
-              stopRecording();
+              /// Cancel recording instead
+              cancelRecording();
             },
           ),
           shadowColor: Colors.transparent,

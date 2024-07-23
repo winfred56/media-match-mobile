@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:async';
 
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:record/record.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +13,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:media_match/shared/data/svg_assets.dart';
 import 'package:media_match/shared/data/animation_assets.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:media_match/src/home/presentation/interface/pages/record_audio.dart';
 
+import '../../../../../entities/shared_preferences.dart';
 import '../../../../../http_requests/search.dart';
 import '../pages/audio_search_result.dart';
 
@@ -55,6 +59,7 @@ class _PrimaryButtonState extends State<PrimaryButton>
     /// Stop recording and search database for a match
     Future<void> stopRecording() async {
       print('10 seconds up ===>');
+
       recordedFilePath.value = (await record.stop())!;
       autoStopTimer?.cancel();
       print('file source: ${recordedFilePath.value}');
@@ -62,13 +67,41 @@ class _PrimaryButtonState extends State<PrimaryButton>
       if (recordedFilePath.value.isNotEmpty) {
         var file = File(recordedFilePath.value);
         if (await file.exists()) {
-          search(recordedFilePath.value).then(
-            (result) => Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => AudioSearchResultPage(result: result),
+          try {
+            search(recordedFilePath.value).then(
+              (result) async {
+                HapticFeedback.heavyImpact();
+                await SharedPreferencesHelper.addAudioSearchResponse(result);
+                if (context.mounted) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => AudioSearchResultPage(result: result),
+                    ),
+                  );
+                }
+              },
+            );
+          } on Exception catch (e) {
+            print(e.toString());
+            final snackBar = SnackBar(
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+              content: AwesomeSnackbarContent(
+                title: 'On Snap!',
+                message:
+                'This was tough, we couldn\'t find a match! When you recognize it please update our database for others to find a match next time',
+
+                /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+                contentType: ContentType.failure,
               ),
-            ),
-          );
+            );
+            if(context.mounted) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(snackBar);
+            }
+          }
         } else {
           print('File does not exist');
         }
@@ -81,12 +114,12 @@ class _PrimaryButtonState extends State<PrimaryButton>
       print('===== = == = = = Job started');
       // Check and request permission
       if (await record.hasPermission()) {
-        // Get temporary directory for storing the recording
+        /// Get temporary directory for storing the recording
         Directory tempDir = await getTemporaryDirectory();
         String tempPath = tempDir.path;
         String filePath = '$tempPath/recording.m4a';
 
-        // Start recording
+        /// Start recording
         await record.start(
           path: filePath,
           encoder: AudioEncoder.aacLc,
@@ -94,13 +127,18 @@ class _PrimaryButtonState extends State<PrimaryButton>
           samplingRate: 44100,
         );
 
-        // Auto stop recording after 10 seconds and search database
+        /// Auto stop recording after 10 seconds and search database
         autoStopTimer = Timer(const Duration(seconds: 10), () {
           stopRecording();
         });
       } else {
         print('Recording permission not granted');
       }
+    }
+
+    cancelRecording() async {
+      await record.stop();
+      if (context.mounted) Navigator.pop(context);
     }
 
     var mediaMatchAnimation = IconController.assets(
@@ -117,26 +155,66 @@ class _PrimaryButtonState extends State<PrimaryButton>
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        if (showOptions.value) ...[
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context, PageRouteBuilder(
+                pageBuilder: (context, child, animation) {
+                  return RecordAudioPage(
+                    recordAudio: recordAudio,
+                    stopRecording: stopRecording,
+                    cancelRecording: cancelRecording,
+                  );
+                },
+              ));
+            },
+            child: AnimatedContainer(
+              duration: 300.milliseconds,
+              height:
+                  boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width,
+              width:
+                  boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width,
+              margin: const EdgeInsets.only(bottom: 30),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: const Border(top: BorderSide(color: Colors.white54)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.blue.shade300,
+                    Colors.blue.shade300,
+                    Colors.blue.shade300,
+                    Colors.blue.shade300,
+                    Colors.blue.shade400,
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.shade700,
+                    blurRadius: 5,
+                    offset: const Offset(0, 2),
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(40),
+                child: SvgPicture.asset(SvgAssets.microphone),
+              ),
+            ).animate().fadeIn().scaleXY(duration: 300.milliseconds),
+          ),
+        ],
         GestureDetector(
           onTap: () {
-            showOptions.value = false;
-            Navigator.push(context, PageRouteBuilder(
-              pageBuilder: (context, child, animation) {
-                return RecordAudioPage(
-                  recordAudio: recordAudio,
-                  stopRecording: stopRecording,
-                );
-              },
-            ));
+            showOptions.value = !showOptions.value;
           },
           child: AnimatedContainer(
             duration: 300.milliseconds,
-            height: showOptions.value
-                ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width
-                : 0,
-            width: showOptions.value
-                ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width
-                : 0,
+            height:
+                boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width,
+            width:
+                boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width,
             margin: const EdgeInsets.only(bottom: 30),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -163,110 +241,65 @@ class _PrimaryButtonState extends State<PrimaryButton>
             ),
             child: Padding(
               padding: const EdgeInsets.all(40),
-              child: SvgPicture.asset(SvgAssets.microphone),
+              child: showOptions.value
+                  ? SvgPicture.asset(SvgAssets.cross)
+                  : IconViewer(controller: mediaMatchAnimation),
             ),
           ).animate().fadeIn().scaleXY(duration: 300.milliseconds),
         ),
-
-        //! ///////
-        GestureDetector(
-          onTap: () {
-            showOptions.value = !showOptions.value;
-          },
-          child: AnimatedContainer(
-            duration: 300.milliseconds,
-            height: showOptions.value
-                ? 70
-                : boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width,
-            width: showOptions.value
-                ? 70
-                : boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: const Border(top: BorderSide(color: Colors.white54)),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.blue.shade300,
-                  Colors.blue.shade300,
-                  Colors.blue.shade300,
-                  Colors.blue.shade300,
-                  Colors.blue.shade400,
+        if (showOptions.value) ...[
+          GestureDetector(
+            onTap: () async {
+              final ImagePicker picker = ImagePicker();
+              final XFile? video =
+                  await picker.pickVideo(source: ImageSource.camera);
+              if (video != null) {
+                print('Video path: ${video.path}');
+                search(video.path);
+              } else {
+                print('No video recorded');
+              }
+            },
+            child: AnimatedContainer(
+              duration: 300.milliseconds,
+              height:
+                  boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width,
+              width:
+                  boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width,
+              margin: const EdgeInsets.only(top: 30),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: const Border(top: BorderSide(color: Colors.white54)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.blue.shade300,
+                    Colors.blue.shade300,
+                    Colors.blue.shade300,
+                    Colors.blue.shade300,
+                    Colors.blue.shade400,
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.shade700,
+                    blurRadius: 5,
+                    offset: const Offset(0, 2),
+                    spreadRadius: 1,
+                  ),
                 ],
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.blue.shade700,
-                  blurRadius: 5,
-                  offset: const Offset(0, 2),
-                  spreadRadius: 1,
-                ),
-              ],
-            ),
-            child: AnimatedBuilder(
-              animation: _controller,
-              builder: (context, child) {
-                return ScaleTransition(
-                  scale: _controller,
-                  child: child,
-                );
-              },
               child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: !showOptions.value
-                    ? IconViewer(controller: mediaMatchAnimation)
-                    : SvgPicture.asset(
-                        SvgAssets.cross,
-                        color: Colors.white,
-                        height: 20,
-                        width: 20,
-                      ),
+                padding: const EdgeInsets.all(40),
+                child: SvgPicture.asset(SvgAssets.cameraMovie),
               ),
-            ),
+            ).animate().fadeIn().scaleXY(duration: 300.milliseconds),
           ),
-        ),
-
-        //! //////////////
-
-        AnimatedContainer(
-          duration: 300.milliseconds,
-          height: showOptions.value
-              ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width
-              : 0,
-          width: showOptions.value
-              ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width
-              : 0,
-          margin: const EdgeInsets.only(top: 30),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: const Border(top: BorderSide(color: Colors.white54)),
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.blue.shade300,
-                Colors.blue.shade300,
-                Colors.blue.shade300,
-                Colors.blue.shade300,
-                Colors.blue.shade400,
-              ],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.blue.shade700,
-                blurRadius: 5,
-                offset: const Offset(0, 2),
-                spreadRadius: 1,
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(40),
-            child: SvgPicture.asset(SvgAssets.cameraMovie),
-          ),
-        ).animate().fadeIn().scaleXY(duration: 300.milliseconds),
+        ]
       ],
     );
   }
 }
+
+

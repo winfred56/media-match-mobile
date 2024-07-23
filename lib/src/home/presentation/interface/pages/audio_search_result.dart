@@ -54,7 +54,7 @@ class AudioSearchResultPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                result.fileName,
+                result.fileName.split('.')[0],
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,

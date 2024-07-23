@@ -28,7 +28,7 @@ class Shell extends HookWidget {
     final pages = [
       const LibraryPage(),
       HomePage(controller: controller),
-      Container(color: Colors.white),
+      // const AnalyticsPage()
     ];
 
     return Scaffold(

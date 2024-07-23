@@ -16,4 +16,13 @@ class AudioSearchResponse {
       durationSeconds: json['duration_seconds'],
     );
   }
+
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'file_name': fileName,
+      'duration_seconds': durationSeconds,
+    };
+  }
 }
