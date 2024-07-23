@@ -14,6 +14,7 @@ import 'package:media_match/shared/data/animation_assets.dart';
 import 'package:media_match/src/home/presentation/interface/pages/record_audio.dart';
 
 import '../../../../../http_requests/search.dart';
+import '../pages/audio_search_result.dart';
 
 class PrimaryButton extends StatefulHookWidget {
   const PrimaryButton({super.key});
@@ -22,7 +23,8 @@ class PrimaryButton extends StatefulHookWidget {
   _PrimaryButtonState createState() => _PrimaryButtonState();
 }
 
-class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateMixin {
+class _PrimaryButtonState extends State<PrimaryButton>
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
@@ -60,16 +62,18 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
       if (recordedFilePath.value.isNotEmpty) {
         var file = File(recordedFilePath.value);
         if (await file.exists()) {
-          await search(recordedFilePath.value);
+          search(recordedFilePath.value).then(
+            (result) => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => AudioSearchResultPage(result: result),
+              ),
+            ),
+          );
         } else {
-          if (kDebugMode) {
-            print('File does not exist');
-          }
+          print('File does not exist');
         }
       } else {
-        if (kDebugMode) {
-          print('Recording file path is null or empty');
-        }
+        print('Recording file path is null or empty');
       }
     }
 
@@ -93,15 +97,14 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
         // Auto stop recording after 10 seconds and search database
         autoStopTimer = Timer(const Duration(seconds: 10), () {
           stopRecording();
-          Navigator.pop(context);
         });
       } else {
         print('Recording permission not granted');
       }
     }
 
-    var mediaMatchAnimation =
-    IconController.assets(AnimationAssets.systemrEgular715SpinnerHorizontalDashedCircle);
+    var mediaMatchAnimation = IconController.assets(
+        AnimationAssets.systemrEgular715SpinnerHorizontalDashedCircle);
 
     mediaMatchAnimation.addStatusListener((status) {
       if (status == ControllerStatus.ready) {
@@ -214,11 +217,11 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
                 child: !showOptions.value
                     ? IconViewer(controller: mediaMatchAnimation)
                     : SvgPicture.asset(
-                  SvgAssets.cross,
-                  color: Colors.white,
-                  height: 20,
-                  width: 20,
-                ),
+                        SvgAssets.cross,
+                        color: Colors.white,
+                        height: 20,
+                        width: 20,
+                      ),
               ),
             ),
           ),
@@ -228,10 +231,12 @@ class _PrimaryButtonState extends State<PrimaryButton> with TickerProviderStateM
 
         AnimatedContainer(
           duration: 300.milliseconds,
-          height:
-          showOptions.value ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width : 0,
-          width:
-          showOptions.value ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width : 0,
+          height: showOptions.value
+              ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width
+              : 0,
+          width: showOptions.value
+              ? boxWidthToScreenWidthRatio * MediaQuery.sizeOf(context).width
+              : 0,
           margin: const EdgeInsets.only(top: 30),
           decoration: BoxDecoration(
             shape: BoxShape.circle,

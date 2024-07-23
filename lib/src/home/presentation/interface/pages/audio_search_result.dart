@@ -10,7 +10,24 @@ class AudioSearchResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final boxDecorationExtensions = Theme.of(context).extension<BoxDecorationExtension>()!;
+    final boxDecorationExtensions =
+        Theme.of(context).extension<BoxDecorationExtension>()!;
+
+    String formatDuration(double seconds) {
+      final int minutes = seconds ~/ 60;
+      final double remainingSeconds = seconds % 60;
+
+      String formattedMinutes = minutes > 0 ? '$minutes min' : '';
+      String formattedSeconds = remainingSeconds > 0 ? '${remainingSeconds.toStringAsFixed(2)} sec' : '';
+
+      if (minutes > 0 && remainingSeconds > 0) {
+        return '$formattedMinutes $formattedSeconds';
+      } else if (minutes > 0) {
+        return formattedMinutes;
+      } else {
+        return formattedSeconds;
+      }
+    }
 
     return Container(
       decoration: boxDecorationExtensions.homeBackground,
@@ -36,17 +53,17 @@ class AudioSearchResultPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'A Sky Full of Stars (From Sing 2)',
-                style: TextStyle(
+              Text(
+                result.fileName,
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                   fontSize: 30,
                 ),
               ),
-              const Text(
-                'Taron Egerton',
-                style: TextStyle(
+              Text(
+                formatDuration(result.durationSeconds),
+                style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   color: Colors.white54,
                   fontSize: 14,
