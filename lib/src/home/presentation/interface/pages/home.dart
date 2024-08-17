@@ -2,63 +2,76 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:gap/gap.dart';
 import 'package:media_match/shared/data/svg_assets.dart';
-import 'package:media_match/shared/presentation/theme/theme_extensions.dart';
-import 'package:media_match/src/home/presentation/interface/widgets/primary_button.dart';
+import 'package:media_match/src/home/presentation/interface/widgets/record_audio_button.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({
-    super.key,
-    required this.controller,
-  });
+  const HomePage({super.key, required this.controller});
   final PageController controller;
 
   @override
   Widget build(BuildContext context) {
-    final boxDecorationExtensions = Theme.of(context).extension<BoxDecorationExtension>()!;
+    final theme = Theme.of(context);
 
-    return Container(
-      decoration: boxDecorationExtensions.homeBackground,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          shadowColor: Colors.transparent,
-          backgroundColor: Colors.transparent,
-          foregroundColor: Colors.white,
-          surfaceTintColor: Colors.transparent,
-          centerTitle: false,
-          title: GestureDetector(
-            onTap: () {
-              controller.animateToPage(
-                0,
-                duration: const Duration(milliseconds: 250),
-                curve: Curves.easeOut,
-              );
-            },
-            child: Column(
-              children: [
-                SvgPicture.asset(
-                  SvgAssets.albumCirclePlus,
-                  color: Colors.white,
-                  height: 20,
-                ),
-                const SizedBox(height: 2),
-                const Text(
-                  'Library',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
+    void animateToPage(int index) {
+      controller.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: IconButton(
+          onPressed: () => animateToPage(0),
+          icon: SvgPicture.asset(
+            SvgAssets.timePast,
+            color: Colors.white,
+            height: 18,
           ),
         ),
-        body: const SafeArea(
-            child: Center(
-          child: PrimaryButton(),
-        )),
+        actions: [
+          IconButton(
+            onPressed: () => animateToPage(2),
+            icon: SvgPicture.asset(
+              SvgAssets.chartHistogram,
+              color: Colors.white,
+              height: 18,
+            ),
+          ),
+          const Gap(16),
+        ],
+      ),
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Spacer(flex: 2),
+              Text(
+                'Tap to record',
+                style: theme.textTheme.titleLarge!.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const Gap(20),
+              const RecordAudioButton(),
+              const Gap(20),
+              const Spacer(),
+              FloatingActionButton(
+                shape: const CircleBorder(),
+                onPressed: () {},
+                child: SvgPicture.asset(
+                  SvgAssets.cameraMovie,
+                ),
+              ),
+              const Spacer(),
+            ],
+          ),
+        ),
       ),
     );
   }

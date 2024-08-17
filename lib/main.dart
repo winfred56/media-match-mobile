@@ -3,11 +3,11 @@ import 'package:media_match/shared/presentation/theme/theme.dart';
 import 'package:media_match/src/shell/presentation/interface/pages/shell.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MatchMedia());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MatchMedia extends StatelessWidget {
+  const MatchMedia({super.key});
 
   @override
   Widget build(BuildContext context) {

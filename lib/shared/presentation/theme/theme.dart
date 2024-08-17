@@ -11,12 +11,11 @@ class AppTheme {
   AppBarTheme _appBarTheme() {
     return const AppBarTheme(
       backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
       foregroundColor: Colors.white,
       elevation: 0,
-      surfaceTintColor: Colors.transparent,
       titleTextStyle: TextStyle(
-        color: Colors.black,
-        fontSize: 14,
+        fontSize: 18,
         fontFamily: 'Montserrat',
         fontWeight: FontWeight.w600,
       ),
@@ -59,6 +58,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: _colorScheme(),
+      scaffoldBackgroundColor: const Color.fromARGB(255, 31, 33, 43),
       fontFamily: 'Montserrat',
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: Colors.transparent,

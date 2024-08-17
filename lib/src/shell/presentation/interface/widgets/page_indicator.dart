@@ -16,12 +16,12 @@ class PageIndicator extends StatelessWidget {
     return SmoothIndicator(
       offset: offset.value,
       count: pages.length,
-      effect: WormEffect(
+      effect: const WormEffect(
         dotWidth: 8,
         dotHeight: 8,
         spacing: 15,
-        activeDotColor: offset.value.round() == 1 ? Colors.white : Colors.blue,
-        dotColor: offset.value.round() == 1 ? Colors.white54 : Colors.grey,
+        activeDotColor: Colors.white,
+        dotColor: Colors.grey,
         type: WormType.thin,
       ),
       size: const Size(50, 1),
