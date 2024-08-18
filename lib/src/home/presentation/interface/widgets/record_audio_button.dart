@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:lottie/lottie.dart';
 import 'package:media_match/shared/data/animation_assets.dart';
+import 'package:media_match/src/home/presentation/interface/pages/record_audio_page.dart';
 
 class RecordAudioButton extends HookWidget {
   const RecordAudioButton({super.key});
@@ -26,6 +27,17 @@ class RecordAudioButton extends HookWidget {
           },
           onPanCancel: () {
             scaleUp.value = true;
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, animation, child) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: const RecordAudioPage(),
+                  );
+                },
+              ),
+            );
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 300),
