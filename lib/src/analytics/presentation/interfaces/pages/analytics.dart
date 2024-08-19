@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:media_match/shared/data/svg_assets.dart';
 
-class AnalyticsPage extends StatelessWidget {
+import '../../../../../http_requests/analytics.dart';
+
+class AnalyticsPage extends HookWidget {
   const AnalyticsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    getAllAnalytics()async{
+      await requestsPerMonth(); /// Returns [MonthlyRequests]
+      await searchesMadeToday(); /// Returns a [List<SearchedToday>]
+      await totalRequestsThisYear(); /// Returns an [int]
+      await averageWeeklySearches(); /// Returns a [double]
+      await mostMatchedSongs(); /// Returns top 3 [MostMatched] Songs/Audios
+      await mostMatchedVideos(); /// Returns top 3 [MostMatched] Videos
+    }
+    useEffect((){
+      getAllAnalytics();
+     return;
+    },[]);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Analytics'),
