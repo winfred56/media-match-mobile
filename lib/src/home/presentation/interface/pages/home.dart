@@ -1,10 +1,14 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:media_match/shared/data/svg_assets.dart';
 import 'package:media_match/src/home/presentation/interface/widgets/record_audio_button.dart';
+
+import '../../../../../http_requests/search.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key, required this.controller});
@@ -63,7 +67,21 @@ class HomePage extends StatelessWidget {
               const Spacer(),
               FloatingActionButton(
                 shape: const CircleBorder(),
-                onPressed: () {},
+                onPressed: () async {
+                  final ImagePicker picker = ImagePicker();
+                  final XFile? video =
+                      await picker.pickVideo(source: ImageSource.camera);
+                  if (video != null) {
+                    if (kDebugMode) {
+                      print('Video path: ${video.path}');
+                    }
+                    search(video.path);
+                  } else {
+                    if (kDebugMode) {
+                      print('No video recorded');
+                    }
+                  }
+                },
                 child: SvgPicture.asset(
                   SvgAssets.cameraMovie,
                 ),

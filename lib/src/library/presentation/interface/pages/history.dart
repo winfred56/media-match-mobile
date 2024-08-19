@@ -1,11 +1,11 @@
+import 'package:gap/gap.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:gap/gap.dart';
 import 'package:media_match/shared/data/svg_assets.dart';
 
-import '../../../../../entities/audio_search_response.dart';
 import '../../../../../entities/shared_preferences.dart';
+import '../../../../../entities/audio_search_response.dart';
 
 class LibraryPage extends StatelessWidget {
   const LibraryPage({super.key});

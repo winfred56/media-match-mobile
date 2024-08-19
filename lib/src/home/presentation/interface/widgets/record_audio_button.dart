@@ -1,6 +1,6 @@
+import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:lottie/lottie.dart';
 import 'package:media_match/shared/data/animation_assets.dart';
 import 'package:media_match/src/home/presentation/interface/pages/record_audio_page.dart';
 
@@ -97,19 +97,19 @@ class RecordAudioButton extends HookWidget {
 //   Widget build(BuildContext context) {
 //     final showOptions = useState(false);
 
-//     /// Instance of record
-//     final record = Record();
-//     ValueNotifier<String> recordedFilePath = ValueNotifier<String>('');
-//     Timer? autoStopTimer;
+    // /// Instance of record
+    // final record = Record();
+    // ValueNotifier<String> recordedFilePath = ValueNotifier<String>('');
+    // Timer? autoStopTimer;
 
 //     /// Stop recording and search database for a match
 //     Future<void> stopRecording() async {
 //       print('10 seconds up ===>');
-
+//
 //       recordedFilePath.value = (await record.stop())!;
 //       autoStopTimer?.cancel();
 //       print('file source: ${recordedFilePath.value}');
-
+//
 //       if (recordedFilePath.value.isNotEmpty) {
 //         var file = File(recordedFilePath.value);
 //         if (await file.exists()) {
@@ -137,7 +137,7 @@ class RecordAudioButton extends HookWidget {
 //                 title: 'On Snap!',
 //                 message:
 //                 'This was tough, we couldn\'t find a match! When you recognize it please update our database for others to find a match next time',
-
+//
 //                 /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
 //                 contentType: ContentType.failure,
 //               ),
@@ -156,36 +156,36 @@ class RecordAudioButton extends HookWidget {
 //       }
 //     }
 
-//     Future<void> recordAudio() async {
-//       print('===== = == = = = Job started');
-//       // Check and request permission
-//       if (await record.hasPermission()) {
-//         /// Get temporary directory for storing the recording
-//         Directory tempDir = await getTemporaryDirectory();
-//         String tempPath = tempDir.path;
-//         String filePath = '$tempPath/recording.m4a';
+    // Future<void> recordAudio() async {
+    //   print('===== = == = = = Job started');
+    //   // Check and request permission
+    //   if (await record.hasPermission()) {
+    //     /// Get temporary directory for storing the recording
+    //     Directory tempDir = await getTemporaryDirectory();
+    //     String tempPath = tempDir.path;
+    //     String filePath = '$tempPath/recording.m4a';
+    //
+    //     /// Start recording
+    //     await record.start(
+    //       path: filePath,
+    //       encoder: AudioEncoder.aacLc,
+    //       bitRate: 128000,
+    //       samplingRate: 44100,
+    //     );
+    //
+    //     /// Auto stop recording after 10 seconds and search database
+    //     autoStopTimer = Timer(const Duration(seconds: 10), () {
+    //       stopRecording();
+    //     });
+    //   } else {
+    //     print('Recording permission not granted');
+    //   }
+    // }
 
-//         /// Start recording
-//         await record.start(
-//           path: filePath,
-//           encoder: AudioEncoder.aacLc,
-//           bitRate: 128000,
-//           samplingRate: 44100,
-//         );
-
-//         /// Auto stop recording after 10 seconds and search database
-//         autoStopTimer = Timer(const Duration(seconds: 10), () {
-//           stopRecording();
-//         });
-//       } else {
-//         print('Recording permission not granted');
-//       }
-//     }
-
-//     cancelRecording() async {
-//       await record.stop();
-//       if (context.mounted) Navigator.pop(context);
-//     }
+    // cancelRecording() async {
+    //   await record.stop();
+    //   if (context.mounted) Navigator.pop(context);
+    // }
 
 //     var mediaMatchAnimation = IconController.assets(
 //         AnimationAssets.systemrEgular715SpinnerHorizontalDashedCircle);
