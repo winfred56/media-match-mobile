@@ -1,21 +1,22 @@
-import 'dart:async';
 import 'dart:io';
+import 'dart:async';
 
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:lottie/lottie.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:media_match/entities/local_media.dart';
 import 'package:record/record.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:media_match/shared/data/animation_assets.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
-import '../../../../../entities/shared_preferences.dart';
-import '../../../../../http_requests/search.dart';
 import 'audio_search_result.dart';
+import '../../../../../http_requests/search.dart';
+import '../../../../../shared/data/animation_assets.dart';
+import '../../../../../entities/shared_preferences.dart';
 
 class RecordAudioPage extends HookWidget {
   const RecordAudioPage({super.key});
@@ -52,13 +53,20 @@ class RecordAudioPage extends HookWidget {
         if (await file.exists()) {
           try {
             search(recordedFilePath.value).then(
-                  (result) async {
+              (result) async {
                 HapticFeedback.heavyImpact();
-                await SharedPreferencesHelper.addAudioSearchResponse(result);
+                final localMedia = LocalMedia(
+                    id: result.id,
+                    fileName: result.fileName,
+                    dateSearched: DateTime.now(),
+                    durationSeconds: result.durationSeconds);
+                await SharedPreferencesHelper.addAudioSearchResponse(
+                    localMedia);
                 if (context.mounted) {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder: (context) => AudioSearchResultPage(result: result),
+                      builder: (context) =>
+                          AudioSearchResultPage(result: result),
                     ),
                   );
                 }
@@ -75,13 +83,13 @@ class RecordAudioPage extends HookWidget {
               content: AwesomeSnackbarContent(
                 title: 'On Snap!',
                 message:
-                'This was tough, we couldn\'t find a match! When you recognize it please update our database for others to find a match next time',
+                    'This was tough, we couldn\'t find a match! When you recognize it please update our database for others to find a match next time',
 
                 /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
                 contentType: ContentType.failure,
               ),
             );
-            if(context.mounted) {
+            if (context.mounted) {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
                 ..showSnackBar(snackBar);
@@ -98,10 +106,12 @@ class RecordAudioPage extends HookWidget {
         }
       }
     }
+
     Future<void> cancelRecording() async {
       await record.stop();
       if (context.mounted) Navigator.pop(context);
     }
+
     Future<void> recordAudio() async {
       if (kDebugMode) {
         print('===== = == = = = Job started');
@@ -137,7 +147,6 @@ class RecordAudioPage extends HookWidget {
         gibberishIndex.value = (gibberishIndex.value + 1) % gibberish.length;
       });
     });
-
 
     // useEffect((){
     //   recordAudio();

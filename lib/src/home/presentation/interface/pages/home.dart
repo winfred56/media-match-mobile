@@ -5,9 +5,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:media_match/shared/data/svg_assets.dart';
-import 'package:media_match/src/home/presentation/interface/widgets/record_audio_button.dart';
 
+import '../widgets/record_audio_button.dart';
+import '../../../../../shared/data/svg_assets.dart';
 import '../../../../../http_requests/search.dart';
 
 class HomePage extends StatelessWidget {

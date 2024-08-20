@@ -96,7 +96,7 @@ class AnalyticsPage extends HookWidget {
                           ),
                           const SizedBox(height: 20),
                           const Text(
-                            'Your analytics will be here.',
+                            'Media Match analytics will be here.',
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 18,
@@ -104,11 +104,14 @@ class AnalyticsPage extends HookWidget {
                             textAlign: TextAlign.center,
                           ),
                           const Text(
-                            'Media match needs enough data from your usage to show you analytics.',
+                            'Media match needs enough data from your usage to show you more analytics.',
                             style: TextStyle(color: Colors.white),
                             textAlign: TextAlign.center,
                           ),
-                        ].animate(interval: 200.milliseconds).fadeIn().slideY(begin: 0.1),
+                        ]
+                            .animate(interval: 200.milliseconds)
+                            .fadeIn()
+                            .slideY(begin: 0.1),
                       ),
                     );
                   }
@@ -131,12 +134,14 @@ class AnalyticsPage extends HookWidget {
                         const Gap(10),
                         Card(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
                             child: Text.rich(
                               TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: totalRequestsThisYear.value.toString(),
+                                    text:
+                                        totalRequestsThisYear.value.toString(),
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 30,
@@ -161,12 +166,14 @@ class AnalyticsPage extends HookWidget {
                         const Gap(10),
                         Card(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
                             child: Text.rich(
                               TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: averageWeeklySearches.value!.toStringAsFixed(2),
+                                    text: averageWeeklySearches.value!
+                                        .toStringAsFixed(2),
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 30,
@@ -204,28 +211,40 @@ class AnalyticsPage extends HookWidget {
                           itemBuilder: (context, index) {
                             return Card(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          mostMatchedSongs.value![index].fileName.split('.').first,
+                                        Flexible(
+                                            child: Text(
+                                          mostMatchedSongs
+                                              .value![index].fileName
+                                              .split('.')
+                                              .first,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                           ),
-                                        ),
-                                        Text(
-                                          mostMatchedSongs.value![index].matchCount.toString(),
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
+                                        )),
+                                        Flexible(
+                                          child: Text(
+                                            '${mostMatchedSongs.value![index].matchCount.toString()}x',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                           ),
-                                        ),
+                                        )
                                       ],
                                     ),
                                   ],
@@ -255,15 +274,20 @@ class AnalyticsPage extends HookWidget {
                           itemBuilder: (context, index) {
                             return Card(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          mostMatchedVideos.value![index].fileName.split('.').first,
+                                          mostMatchedVideos
+                                              .value![index].fileName
+                                              .split('.')
+                                              .first,
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 14,
@@ -271,7 +295,9 @@ class AnalyticsPage extends HookWidget {
                                           ),
                                         ),
                                         Text(
-                                          mostMatchedVideos.value![index].matchCount.toString(),
+                                          mostMatchedVideos
+                                              .value![index].matchCount
+                                              .toString(),
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w600,
@@ -365,7 +391,8 @@ class _RequestsPerMonth extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maximumRequests = requests.toJson().values.reduce((a, b) => a > b ? a : b);
+    final maximumRequests =
+        requests.toJson().values.reduce((a, b) => a > b ? a : b);
     final animate = useState(false);
 
     useMemoized(() async {
@@ -405,12 +432,14 @@ class _RequestsPerMonth extends HookWidget {
                                     ),
                                   ),
                                 AnimatedContainer(
-                                  margin: const EdgeInsets.symmetric(vertical: 5),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 5),
                                   curve: Curves.easeInOut,
                                   duration: 200.milliseconds,
                                   width: 5,
                                   height: animate.value || value == 0
-                                      ? (value / maximumRequests) * (constraints.maxHeight - 25)
+                                      ? (value / maximumRequests) *
+                                          (constraints.maxHeight - 25)
                                       : 5,
                                   decoration: BoxDecoration(
                                     color: Colors.blue,

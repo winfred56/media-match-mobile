@@ -3,7 +3,7 @@ import 'package:media_match/shared/presentation/theme/theme.dart';
 import 'package:media_match/src/shell/presentation/interface/pages/shell.dart';
 
 
-void main() {
+void main() async {
   runApp(const MatchMedia());
 }
 
