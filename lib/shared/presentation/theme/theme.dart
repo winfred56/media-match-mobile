@@ -56,18 +56,20 @@ class AppTheme {
 
   ThemeData theme() {
     return ThemeData(
-      useMaterial3: true,
-      colorScheme: _colorScheme(),
-      scaffoldBackgroundColor: const Color.fromARGB(255, 31, 33, 43),
-      fontFamily: 'Montserrat',
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: Colors.transparent,
-      ),
-      extensions: <ThemeExtension>{
-        _boxDecorationExtension(),
-      },
-      appBarTheme: _appBarTheme(),
-      listTileTheme: _listTileTheme(),
-    );
+        useMaterial3: true,
+        colorScheme: _colorScheme(),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 31, 33, 43),
+        fontFamily: 'Montserrat',
+        bottomSheetTheme: const BottomSheetThemeData(
+          backgroundColor: Colors.transparent,
+        ),
+        extensions: <ThemeExtension>{
+          _boxDecorationExtension(),
+        },
+        appBarTheme: _appBarTheme(),
+        listTileTheme: _listTileTheme(),
+        cardTheme: const CardTheme(
+          color: Colors.black54,
+        ));
   }
 }
