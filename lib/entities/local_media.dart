@@ -15,8 +15,8 @@ class LocalMedia {
     return LocalMedia(
       id: json['id'],
       fileName: json['file_name'],
-      dateSearched: json['date_searched'],
       durationSeconds: json['duration_seconds'],
+      dateSearched: DateTime.parse(json['date_searched']),
     );
   }
 
@@ -24,8 +24,8 @@ class LocalMedia {
     return {
       'id': id,
       'file_name': fileName,
-      'date_searched': dateSearched,
       'duration_seconds': durationSeconds,
+      'date_searched': dateSearched.toIso8601String(),
     };
   }
 }

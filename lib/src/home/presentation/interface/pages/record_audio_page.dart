@@ -148,10 +148,10 @@ class RecordAudioPage extends HookWidget {
       });
     });
 
-    // useEffect((){
-    //   recordAudio();
-    //   return;
-    // },[]);
+    useEffect((){
+      recordAudio();
+      return;
+    },[]);
 
     return Scaffold(
       backgroundColor: Colors.black,
