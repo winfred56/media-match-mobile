@@ -70,6 +70,7 @@ class AppTheme {
         listTileTheme: _listTileTheme(),
         cardTheme: const CardTheme(
           color: Colors.black54,
+          margin: EdgeInsets.all(0),
         ));
   }
 }

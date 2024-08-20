@@ -16,12 +16,12 @@ class AnalyticsPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final requestsPerMonth = useState<MonthlyRequests?>(null);
+    final requestsPerMonth = useState<MonthlyRequests?>(null); //
     final searchesMadeToday = useState<List<SearchedToday>?>(null);
-    final totalRequestsThisYear = useState<int?>(null);
-    final averageWeeklySearches = useState<double?>(null);
-    final mostMatchedSongs = useState<List<MostMatched>?>(null);
-    final mostMatchedVideos = useState<List<MostMatched>?>(null);
+    final totalRequestsThisYear = useState<int?>(null); //
+    final averageWeeklySearches = useState<double?>(null); //
+    final mostMatchedSongs = useState<List<MostMatched>?>(null); //
+    final mostMatchedVideos = useState<List<MostMatched>?>(null); //
     final loading = useState(false);
 
     getAllAnalytics() async {
@@ -121,11 +121,234 @@ class AnalyticsPage extends HookWidget {
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                         const Gap(10),
-                        _RequestsPerMonth(requests: requestsPerMonth.value!)
-                      ]
+                        _RequestsPerMonth(requests: requestsPerMonth.value!),
+                      ],
+                      if (totalRequestsThisYear.value != null) ...[
+                        const Gap(10),
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            child: Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: totalRequestsThisYear.value.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        '  ${totalRequestsThisYear.value == 1 ? 'request' : 'requests'} made this year',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                      if (averageWeeklySearches.value != null) ...[
+                        const Gap(10),
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            child: Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: averageWeeklySearches.value!.toStringAsFixed(2),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        '  ${averageWeeklySearches.value == 1 ? 'request' : 'requests'}/week (average)',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                      if (mostMatchedSongs.value?.isNotEmpty ?? false) ...[
+                        const Gap(20),
+                        const Text(
+                          'Most matched songs',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Gap(10),
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return Card(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          mostMatchedSongs.value![index].fileName.split('.').first,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        Text(
+                                          mostMatchedSongs.value![index].matchCount.toString(),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) => const Gap(10),
+                          itemCount: mostMatchedSongs.value!.length,
+                        ),
+                      ],
+
+                      if (mostMatchedVideos.value?.isNotEmpty ?? false) ...[
+                        const Gap(20),
+                        const Text(
+                          'Most matched videos',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Gap(10),
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return Card(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          mostMatchedVideos.value![index].fileName.split('.').first,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        Text(
+                                          mostMatchedVideos.value![index].matchCount.toString(),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) => const Gap(10),
+                          itemCount: mostMatchedVideos.value!.length,
+                        ),
+                      ],
+                      // if (searchesMadeToday.value?.isNotEmpty ?? false) ...[
+                      //   const Gap(20),
+                      //   Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       const Text(
+                      //         'Searches made today',
+                      //         style: TextStyle(
+                      //           color: Colors.white,
+                      //           fontSize: 16,
+                      //         ),
+                      //       ),
+                      //       Transform.translate(
+                      //         offset: const Offset(10, 0),
+                      //         child: IconButton(
+                      //           onPressed: () {},
+                      //           icon: const Icon(
+                      //             Icons.arrow_forward_ios,
+                      //             color: Colors.grey,
+                      //             size: 16,
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      //   const Gap(10),
+                      //   GridView.count(
+                      //     shrinkWrap: true,
+                      //     physics: const NeverScrollableScrollPhysics(),
+                      //     crossAxisCount: 2,
+                      //     children: searchesMadeToday.value!
+                      //         .map(
+                      //           (search) => Card(
+                      //             child: Padding(
+                      //               padding: const EdgeInsets.all(8.0),
+                      //               child: Column(
+                      //                 crossAxisAlignment: CrossAxisAlignment.start,
+                      //                 children: [
+                      //                   Text(
+                      //                     search.mediaName,
+                      //                     style: const TextStyle(
+                      //                       color: Colors.white,
+                      //                       fontSize: 16,
+                      //                     ),
+                      //                   ),
+                      //                   const Gap(5),
+                      //                   Text(
+                      //                     search.timestamp.toString(),
+                      //                     style: const TextStyle(
+                      //                       color: Colors.grey,
+                      //                       fontSize: 12,
+                      //                     ),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         )
+                      //         .toList(),
+                      //   )
+                      // ],
                     ],
                   );
                 },
