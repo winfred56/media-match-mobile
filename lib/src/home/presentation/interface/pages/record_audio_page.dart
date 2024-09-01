@@ -19,7 +19,9 @@ import '../../../../../shared/data/animation_assets.dart';
 import '../../../../../entities/shared_preferences.dart';
 
 class RecordAudioPage extends HookWidget {
-  const RecordAudioPage({super.key});
+  const RecordAudioPage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -55,18 +57,13 @@ class RecordAudioPage extends HookWidget {
             search(recordedFilePath.value).then(
               (result) async {
                 HapticFeedback.heavyImpact();
-                final localMedia = LocalMedia(
-                    id: result.id,
-                    fileName: result.fileName,
-                    dateSearched: DateTime.now(),
-                    durationSeconds: result.durationSeconds);
-                await SharedPreferencesHelper.addAudioSearchResponse(
-                    localMedia);
+                final localMedia =
+                    LocalMedia(id: result.id, fileName: result.fileName, dateSearched: DateTime.now(), durationSeconds: result.durationSeconds);
+                await SharedPreferencesHelper.addAudioSearchResponse(localMedia);
                 if (context.mounted) {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder: (context) =>
-                          AudioSearchResultPage(result: result),
+                      builder: (context) => AudioSearchResultPage(result: result),
                     ),
                   );
                 }
@@ -148,10 +145,10 @@ class RecordAudioPage extends HookWidget {
       });
     });
 
-    useEffect((){
+    useEffect(() {
       recordAudio();
       return;
-    },[]);
+    }, []);
 
     return Scaffold(
       backgroundColor: Colors.black,

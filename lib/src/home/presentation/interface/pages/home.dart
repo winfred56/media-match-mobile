@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:media_match/src/home/presentation/interface/pages/video_loading.dart';
 
 import '../widgets/record_audio_button.dart';
 import '../../../../../shared/data/svg_assets.dart';
@@ -69,13 +70,20 @@ class HomePage extends StatelessWidget {
                 shape: const CircleBorder(),
                 onPressed: () async {
                   final ImagePicker picker = ImagePicker();
-                  final XFile? video =
-                      await picker.pickVideo(source: ImageSource.camera);
+                  final XFile? video = await picker.pickVideo(source: ImageSource.gallery);
                   if (video != null) {
                     if (kDebugMode) {
                       print('Video path: ${video.path}');
                     }
-                    search(video.path);
+                    if (context.mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VideoLoadingScreen(videoPath: video.path),
+                        ),
+                      );
+                    }
+                    // search(video.path);
                   } else {
                     if (kDebugMode) {
                       print('No video recorded');

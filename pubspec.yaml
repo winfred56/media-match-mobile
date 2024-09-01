@@ -66,3 +66,4 @@ flutter:
   assets:
     - assets/svg/
     - assets/animation/
+    - assets/image/
