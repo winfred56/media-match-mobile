@@ -129,7 +129,7 @@ class RecordAudioPage extends HookWidget {
         );
 
         /// Auto stop recording after 10 seconds and search database
-        autoStopTimer = Timer(const Duration(seconds: 10), () {
+        autoStopTimer = Timer(const Duration(seconds: 15), () {
           stopRecording();
         });
       } else {

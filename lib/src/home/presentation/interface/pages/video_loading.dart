@@ -20,6 +20,8 @@ class VideoLoadingScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final gibberishIndex = useState(0);
+    final isSearchCompleted = useState(false);
+    Timer? timer;
 
     final gibberish = [
       'Hang on for a moment',
@@ -27,26 +29,40 @@ class VideoLoadingScreen extends HookWidget {
       'This is taking longer than usual',
     ];
 
-    useMemoized(() {
-      Timer.periodic(const Duration(seconds: 10), (timer) {
-        gibberishIndex.value = (gibberishIndex.value + 1) % gibberish.length;
+    useEffect(() {
+      timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+        if (!isSearchCompleted.value) {
+          gibberishIndex.value = (gibberishIndex.value + 1) % gibberish.length;
+        } else {
+          timer.cancel();
+        }
       });
-    });
 
-    useMemoized(() async {
-      final response = await search(videoPath);
-      if (context.mounted) {
-        Navigator.pop(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AudioSearchResultPage(
-              result: response,
+      return () {
+        timer?.cancel(); // Clean up the timer when the widget is disposed
+      };
+    }, [isSearchCompleted.value]);
+
+    useEffect(() {
+      Future<void> fetchData() async {
+        final response = await search(videoPath);
+        if (context.mounted) {
+          isSearchCompleted.value = true; // Stop gibberish updates
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AudioSearchResultPage(
+                result: response,
+              ),
             ),
-          ),
-        );
+          );
+        }
       }
-    });
+
+      fetchData();
+      return null;
+    }, []);
 
     return Scaffold(
       backgroundColor: Colors.black,

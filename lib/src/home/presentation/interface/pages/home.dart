@@ -9,7 +9,6 @@ import 'package:media_match/src/home/presentation/interface/pages/video_loading.
 
 import '../widgets/record_audio_button.dart';
 import '../../../../../shared/data/svg_assets.dart';
-import '../../../../../http_requests/search.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key, required this.controller});
@@ -70,16 +69,15 @@ class HomePage extends StatelessWidget {
                 shape: const CircleBorder(),
                 onPressed: () async {
                   final ImagePicker picker = ImagePicker();
-                  final XFile? video = await picker.pickVideo(source: ImageSource.gallery);
+                  final XFile? video =
+                      await picker.pickVideo(source: ImageSource.camera);
                   if (video != null) {
-                    if (kDebugMode) {
-                      print('Video path: ${video.path}');
-                    }
                     if (context.mounted) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => VideoLoadingScreen(videoPath: video.path),
+                          builder: (context) =>
+                              VideoLoadingScreen(videoPath: video.path),
                         ),
                       );
                     }

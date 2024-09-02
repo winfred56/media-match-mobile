@@ -18,6 +18,7 @@ Future<AudioSearchResponse> search(String filePath) async {
     if (response.statusCode == 200) {
       final responseData = await http.Response.fromStream(response);
       final data = jsonDecode(responseData.body);
+      print(data['file']);
       return AudioSearchResponse.fromJson(data['file']);
     } else {
       print('Failed to upload audio file. Status code: ${response.statusCode}');
