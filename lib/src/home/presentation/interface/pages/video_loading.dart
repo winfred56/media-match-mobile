@@ -39,7 +39,7 @@ class VideoLoadingScreen extends HookWidget {
       });
 
       return () {
-        timer?.cancel(); // Clean up the timer when the widget is disposed
+        timer?.cancel(); // Cancel up timer when widget is disposed
       };
     }, [isSearchCompleted.value]);
 
